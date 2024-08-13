@@ -5,9 +5,8 @@ date: "2022-09-13"
 output: html_document
 ---
 
-## Package and Library Setup // File Upload
 
-I started out by installing all necessary packages, loading libraries, and uploading my data set. I merged the data in Excel BEFORE loading the data into R. In order for some of my later plots to work, I did have to make a new variable called "State_Code" for use with R libraries.
+## Package and Library Setup // File Upload
 
 ```{r setup, echo = FALSE}
 options(repos = list(CRAN="http://cran.rstudio.com/"))
@@ -30,9 +29,8 @@ covid_data_merged <- read_csv("COVID_data_2022/covid_data_merged.csv",
 
 ```
 
-## Data Manipulation
 
-I started by running some log transformations on the variables with extremely large values. I also made a new data frame here for use later.
+## Data Manipulation
 
 ```{r manip}
 # Log some numbers to get easier data to work with
@@ -51,8 +49,6 @@ logDF <- data.frame(logConfirmed, logDeaths)
 
 ## Some Quick Box Plots
 
-Here I just wanted to make a population distribution of the 4 regions, those being the Entire US (0), Northeast (1), Midwest (2), South (3), West (4), and Territories (5). Note that the only territory with a population estimate is Puerto Rico. The upper outliers are as follows: Midwest: Illinois, South: Texas, West: California.
-
 ```{r box plots}
 
 ggplot(data = covid_data_merged, mapping = aes(x = REGION, y = logPOPESTIMATE, color = REGION)) +
@@ -64,8 +60,6 @@ ggplot(data = covid_data_merged, mapping = aes(x = REGION, y = logPOPESTIMATE, c
 
 
 ## Multiple Linear Regression Model
-
-I chose to run a linear regression model to see how the amount of deaths is related to the amnount of confirmed cases, total test results, and the testing rate.
 
 ```{r analysis}
 ## Multiple Linear Regression models for deaths, as well as cor test
@@ -83,10 +77,6 @@ cortest2 <- cor.test(x = logConfirmed, y = logDeaths)
 cortest2
 
 ```
-
-The first model gave an extremely small p-value when comparing deaths to confirmed cases. This makes sense because states with more cases would be likely to have more deaths. This model also provided an R-squared value of 0.95, suggesting it is a good model. I then decided to make a second model removing the confirmed cases variable, and only comparing deaths to total test results and the testing rate. When doing this, the p-value of both variables got much smaller. I also got an  R-squared value of 0.74, suggesting it is a good model, however not as good as the first.
-
-I also ran a correlation coefficient test to test the correlation between deaths and confirmed to test my suspicion. To my surprise, the two do not seem to be AS correlated as I thought they would have been, given a correlation value of 0.409.
 
 ## Correlation Plots
 
@@ -113,8 +103,6 @@ annotate_figure(figure, top=text_grob("Regression Plots of Confirmed Cases and D
 
 ## Choropleth Maps Displaying Covid Cases per State
 
-Here I created an interactive choropleth map using the plotly package. Here we can see the distribution of COVID-19 cases per state. Because states which have large urban areas had so many more cases, it can be hard to distinguish between some of the lower count colors in states like small populations like North and South Dakota, Nebraska, Wyoming, etc.
-
 ```{r choropleth map}
 
 covid_cases = plot_geo(covid_data_merged,
@@ -132,7 +120,8 @@ covid_cases
 
 ```
 
-I then chose to try plotting the log transformed Confirmed Cases on to a choropleth map to see it would be easier to distinguish between the confirmed case count in each state. I chose to set the lower bound of the color scale to 10 since some outliers were skewing the gradient scale as well.
+
+## Choropleth Map Displaying Log Transformed Confirmed Cases per State
 
 ```{r choroplot map 2}
 
@@ -150,13 +139,10 @@ covid_cases_log = plot_geo(covid_data_merged,
 covid_cases_log
 ```
 
-## Choropleth Maps Comparing Divisions and Regions
-
-I was curious as to the difference between Region and Division, so using the choropleth maps again, I mapped out the 2 variables. No real information is gathered from this, I was just curious and like these maps!
-
-```{r}
 
 # Create US map of states divided into "divisions"
+
+```{r}
 
 division_map = plot_geo(covid_data_merged,
                       locationmode = 'USA-states') %>%
@@ -174,9 +160,10 @@ division_map
 
 ```
 
-```{r}
 
 # Create US map of states divided into "regions"
+
+```{r}
 
 region_map = plot_geo(covid_data_merged,
                       locationmode = 'USA-states') %>%
